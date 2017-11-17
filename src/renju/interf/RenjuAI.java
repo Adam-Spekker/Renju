@@ -23,5 +23,10 @@ public class RenjuAI implements RenjuInterface{
     public Board getBoard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+ 
+    @Override
+    public void update() {
+        
+    }
     
 }

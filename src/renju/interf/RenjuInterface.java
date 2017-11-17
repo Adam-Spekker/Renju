@@ -19,6 +19,6 @@ public interface RenjuInterface {
     
     public Board getBoard();
     
-    
+    public void update();
     
 }

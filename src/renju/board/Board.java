@@ -5,7 +5,9 @@
  */
 package renju.board;
 
+import java.util.ArrayList;
 import renju.exception.*;
+import renju.interf.RenjuInterface;
 import renju.board.Piece.*;
 
 /**
@@ -18,6 +20,7 @@ public class Board {
        int currentTurn;
        Field lastField;
        boolean isFinished;
+       ArrayList<RenjuInterface> interfaceList; 
        
        public Board() {
           board = new Field[15][15];
@@ -32,8 +35,20 @@ public class Board {
           currentPlayer = COLOR.BLACK;
           Piece.resetCnt();
           currentTurn = 1;
+          interfaceList = new ArrayList<>();
           
        } 
+       
+       public void setInterface(RenjuInterface i) {
+               
+           interfaceList.add(i);           
+       }
+       
+       private void update() {
+           for (RenjuInterface iter : interfaceList) {
+               iter.update();
+           }
+        }
        
        public void reset() {
             isFinished = false;
@@ -46,6 +61,7 @@ public class Board {
                   board[i][j].deletePiece();
            
            lastField = null;
+           this.update();
            
        }
        
@@ -104,6 +120,7 @@ public class Board {
                 if (board[x][y].getPiece() == null) {
                     board[x][y].addPiece(new Piece());
                     lastField=board[x][y];
+                    this.update();
                 } else {
                     throw new InvalidStepException();
                 }

@@ -53,6 +53,9 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     int fieldSize;
     String bottomLabelString;
     
+    
+   
+    
     public RenjuUI() {
         
         ///setup frame to be visible and exit on X
@@ -99,14 +102,17 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         
         this.pack();
         this.setVisible(true);
+        
+        
+        
+       // bottomLabel.setText(infc.toString());
     }
     
     @Override
     public void setBoard(Board b) {
         renjuBoard = b;
-        bottomLabel.setText(renjuBoard.getCurrentPlayer().toString());
-        
-        
+        renjuBoard.setInterface(this);
+        bottomLabel.setText(renjuBoard.getCurrentPlayer().toString());        
     }
         
     @Override
@@ -114,9 +120,10 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         return renjuBoard;
     }
     
-    
-
-   
+    @Override 
+    public void update() {
+        board.repaint();
+    }
     
     /// panel with background image
     
@@ -245,8 +252,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                
                if (command.equals("New Game")) {
                    JOptionPane.showMessageDialog(frame, "New game initialized");
-                   renjuBoard.reset();
-                   board.repaint();                   
+                   renjuBoard.reset();                                 
                } 
                
                if (command.equals("Quit")) {
@@ -278,8 +284,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                     JOptionPane.showMessageDialog(frame, "Can not step there, it is already taken!", "Error", JOptionPane.ERROR_MESSAGE);                 
                 }
                 
-                COLOR winner = renjuBoard.checkBoard();
-                board.repaint();
+                COLOR winner = renjuBoard.checkBoard();                
                 if (COLOR.EMPTY != winner)                   
                     JOptionPane.showMessageDialog(frame, (winner.toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
                                   
