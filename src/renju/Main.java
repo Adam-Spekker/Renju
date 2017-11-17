@@ -32,9 +32,11 @@ public class Main {
 //       }
        
        RenjuInterface ui = new RenjuUI();
-       RenjuInterface ai = new RenjuAI();
+      // RenjuInterface ui2 = new RenjuUI();
+       //RenjuInterface ai = new RenjuAI();
        ui.setBoard(board);
-       ai.setBoard(board);
+      // ui2.setBoard(board);
+      // ai.setBoard(board);
        
        
        
