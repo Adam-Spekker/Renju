@@ -1,0 +1,146 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package renju.board;
+
+import renju.exception.*;
+import renju.board.Piece.*;
+
+/**
+ *
+ * @author archghoul
+ */
+public class Board {
+       Field[][] board;
+       COLOR currentPlayer;
+       int currentTurn;
+       Field lastField;
+       boolean isFinished;
+       
+       public Board() {
+          board = new Field[15][15];
+          isFinished = false;
+          
+          for (int i = 0; i < 15 ; i++)
+              for (int j = 0; j < 15 ; j++)
+                  board[i][j] = new Field(i,j);
+          
+          
+          
+          currentPlayer = COLOR.BLACK;
+          Piece.resetCnt();
+          currentTurn = 1;
+          
+       } 
+       
+       public void reset() {
+            isFinished = false;
+            currentPlayer = COLOR.BLACK;
+            Piece.resetCnt();
+            currentTurn = 1;
+           
+           for (int i = 0; i < 15 ; i++)
+              for (int j = 0; j < 15 ; j++)
+                  board[i][j].deletePiece();
+           
+           lastField = null;
+           
+       }
+       
+       private boolean checkLine(int x, int y, int v, int h) {
+           // vertical check
+           int before = 0;
+           int after = 0;
+           for (int i = 1; i < 5 ; i++) {
+               if(x-i*v < 0 || y-i*h < 0 || x-i*v > 14 || y-i*h > 14)
+                   break;
+               else 
+                   if (board[x-i*v][y-i*h].getColor() == lastField.getColor()) {
+                       before++;
+                   }     
+           }
+           for (int i = 1; i < 5 ; i++) {
+               if(x+i*v < 0 || y+i*h < 0 || x+i*v > 14 || y+i*h > 14)
+                   break;
+               else 
+                   if (board[x+i*v][y+i*h].getColor() == lastField.getColor()) {
+                       after++;
+                   }     
+           } 
+           return before+after >= 4; //System.out.println("Nyertes:" + lastField.getColor());
+           
+           
+       }
+       
+       public COLOR checkBoard() {
+           
+           int x = lastField.getX();
+           int y = lastField.getY();
+           
+           if (checkLine(x,y,1,0) || checkLine(x,y,0,1) || checkLine(x,y,1,1) || checkLine(x,y,-1,1)) {   
+               isFinished = true;
+               return lastField.getColor();
+           } else {
+               return COLOR.EMPTY;
+           }
+           
+       }
+       
+       public void printField(int x, int y) {
+           if (x>14 || x<0 || y>14 || y<0){
+               ////hiba out of bound
+           }else{                
+                System.out.println("FIELD[" + x + ", " + y + "]: " + board[x][y].toString()); 
+           }
+       
+       }
+       
+      
+       
+       public void putPiece(int x, int y) throws InvalidStepException, GameFinishedException {
+            if (!isFinished) {
+                if (board[x][y].getPiece() == null) {
+                    board[x][y].addPiece(new Piece());
+                    lastField=board[x][y];
+                } else {
+                    throw new InvalidStepException();
+                }
+              
+           } else {
+               throw new GameFinishedException();
+           }
+       }
+       
+       
+       
+       public COLOR[][] getBoardColor() {
+            COLOR[][] out = new COLOR[15][15];
+            for(int i = 0; i <15; i++){
+                for(int j = 0; j < 15; j++){
+                        out[i][j] = board[i][j].getColor();
+                    } 
+                }
+            
+            return out;
+       }
+       
+       public void printBoardColor() { 
+           COLOR[][] temp = getBoardColor();
+           System.out.println("Board in " + currentTurn + ". turn:" );
+           for (int i = 0; i < 15; i++ ) {
+               for (int j = 0; j < 15; j++) {
+                   System.out.print(temp[i][j].toChar());
+               }
+               System.out.println();
+           }
+        }
+       
+       public COLOR getCurrentPlayer(){
+           return currentPlayer;
+       }
+       
+       
+       
+}
