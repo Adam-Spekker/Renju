@@ -18,8 +18,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 import javax.swing.*;
 import renju.board.Piece.COLOR;
@@ -64,7 +63,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         frame = this;
         message = new JOptionPane();
         
-        size = 750;
+        size = 900;
         fieldSize = (int) (size / 15);
         
         
@@ -77,7 +76,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                
         ///create panels
         main = new JPanel(new BorderLayout());
-        board = new BoardPanel("wood.jpg");
+        board = new BoardPanel("wood2.jpg");
         bottom = new JPanel(new BorderLayout());
                 
         ///set up bottom information field
@@ -87,7 +86,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         bottomLabel.setText("Ready");
         
         ///set up board panel
-        board.setPreferredSize(new Dimension(750,750));
+        board.setPreferredSize(new Dimension(size,size));
         board.addMouseListener(new BoardMouseListener());
         
         ///set up main panel
@@ -123,22 +122,24 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     
         public class BoardPanel extends JPanel {
            
-            private final Image img;
+            private Image imgBG, imgBlack, imgWhite, currImg;
             
             public BoardPanel(String img) {                
-                this.img = new ImageIcon(img).getImage();
-                
+                this.imgBG = new ImageIcon(img).getImage();
+                this.imgBlack = new ImageIcon("Haematit.png").getImage();
+                this.imgWhite = new ImageIcon("Amber.png").getImage();
+                this.currImg = null;
             }
             
             @Override
             public void paintComponent(Graphics g) {
-                g.drawImage(img, 0,0, null);
+                g.drawImage(imgBG, 0,0, null);
                 
                 ///draw lines
                 for ( int i = 0; i < 15; i++) {
                     ///vertical
                     g.setColor(Color.BLACK);
-                    g.drawRect(fieldSize/2 + i*fieldSize, fieldSize/2, 1, 14*fieldSize);
+                    g.drawRect(fieldSize/2 + i*fieldSize, fieldSize/2, 1, 14*fieldSize);                    
                     //g.drawLine(distX + i*2*distX, distY, distX + i*2*distX , distY+14*2*distY);     
                     
                     ///horizontal
@@ -152,16 +153,18 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                         switch (currentState[j][i].toChar()) {  
                                 case 'B' :                                     
                                     g.setColor(Color.BLACK);
+                                    currImg = imgBlack;
                                     break;
                                 case 'W' : 
                                     g.setColor(Color.WHITE);
+                                    currImg = imgWhite;
                                     break;
                                     
                                 default: 
                                     continue;                                 
                                 }
-                        g.drawOval(i*fieldSize, j*fieldSize, fieldSize, fieldSize);
-                    
+                        //g.drawOval(i*fieldSize, j*fieldSize, fieldSize, fieldSize);
+                        g.drawImage(currImg,i*fieldSize, j*fieldSize, fieldSize, fieldSize, null);
                     }
                 }
                 
