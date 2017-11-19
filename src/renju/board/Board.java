@@ -75,7 +75,7 @@ public class Board {
                else 
                    if (board[x-i*v][y-i*h].getColor() == lastField.getColor()) {
                        before++;
-                   }     
+                   } else break;    
            }
            for (int i = 1; i < 5 ; i++) {
                if(x+i*v < 0 || y+i*h < 0 || x+i*v > 14 || y+i*h > 14)
@@ -83,7 +83,8 @@ public class Board {
                else 
                    if (board[x+i*v][y+i*h].getColor() == lastField.getColor()) {
                        after++;
-                   }     
+                   } else break;
+                   
            } 
            return before+after >= 4; //System.out.println("Nyertes:" + lastField.getColor());
            
