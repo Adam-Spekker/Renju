@@ -30,17 +30,13 @@ public class Board {
               for (int j = 0; j < 15 ; j++)
                   board[i][j] = new Field(i,j);
           
-          
-          
           currentPlayer = COLOR.BLACK;
           Piece.resetCnt();
           currentTurn = 1;
-          interfaceList = new ArrayList<>();
-          
+          interfaceList = new ArrayList<>();          
        } 
        
-       public void setInterface(RenjuInterface i) {
-               
+       public void setInterface(RenjuInterface i) {               
            interfaceList.add(i);           
        }
        
@@ -65,38 +61,57 @@ public class Board {
            
        }
        
-       private boolean checkLine(int x, int y, int v, int h) {
-           // vertical check
-           int before = 0;
-           int after = 0;
-           for (int i = 1; i < 5 ; i++) {
+       
+       int countFork(int x, int y, int v, int h, int max) {
+           int cnt = 0; 
+           for (int i = 1; i < max+1 ; i++) {
                if(x-i*v < 0 || y-i*h < 0 || x-i*v > 14 || y-i*h > 14)
                    break;
                else 
                    if (board[x-i*v][y-i*h].getColor() == lastField.getColor()) {
-                       before++;
+                       cnt++;
                    } else break;    
            }
-           for (int i = 1; i < 5 ; i++) {
-               if(x+i*v < 0 || y+i*h < 0 || x+i*v > 14 || y+i*h > 14)
-                   break;
-               else 
-                   if (board[x+i*v][y+i*h].getColor() == lastField.getColor()) {
-                       after++;
-                   } else break;
-                   
-           } 
-           return before+after >= 4; //System.out.println("Nyertes:" + lastField.getColor());
+           return cnt;
+       }
+       
+       private boolean checkLine(int x, int y, int v, int h, int max) {
+           // vertical check
+           int before;
+           int after;
+//           for (int i = 1; i < max+1 ; i++) {
+//               if(x-i*v < 0 || y-i*h < 0 || x-i*v > 14 || y-i*h > 14)
+//                   break;
+//               else 
+//                   if (board[x-i*v][y-i*h].getColor() == lastField.getColor()) {
+//                       before++;
+//                   } else break;    
+//           }
+//           for (int i = 1; i < max ; i++) {
+//               if(x+i*v < 0 || y+i*h < 0 || x+i*v > 14 || y+i*h > 14)
+//                   break;
+//               else 
+//                   if (board[x+i*v][y+i*h].getColor() == lastField.getColor()) {
+//                       after++;
+//                   } else break;
+//                   
+//           } 
+            before = countFork(x,y,v,h,max);
+            after = countFork(x,y,-v,-h,max);
+
+           return before+after >= max; //System.out.println("Nyertes:" + lastField.getColor());
            
            
        }
        
        public COLOR checkBoard() {
+           if (lastField == null)
+               return COLOR.EMPTY;
            
            int x = lastField.getX();
            int y = lastField.getY();
            
-           if (checkLine(x,y,1,0) || checkLine(x,y,0,1) || checkLine(x,y,1,1) || checkLine(x,y,-1,1)) {   
+           if (checkLine(x,y,1,0,4) || checkLine(x,y,0,1,4) || checkLine(x,y,1,1,4) || checkLine(x,y,-1,1,4)) {   
                isFinished = true;
                return lastField.getColor();
            } else {
@@ -125,8 +140,10 @@ public class Board {
             if (!isFinished) {
                 if (isValid(x,y)) {
                     board[x][y].addPiece(new Piece());
-                    lastField=board[x][y];
-                    this.update();
+                    lastField = board[x][y];
+                    currentTurn++; 
+                    currentPlayer = currentPlayer == COLOR.BLACK ? COLOR.WHITE : COLOR.BLACK;
+                    this.update();                    
                 } else {
                     throw new InvalidStepException();
                 }

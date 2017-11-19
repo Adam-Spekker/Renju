@@ -281,7 +281,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                     JOptionPane.showMessageDialog(frame, "Game has ended, you can not move any more!", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 } catch (InvalidStepException ex) {
-                    JOptionPane.showMessageDialog(frame, "Can not step there, it is already taken!", "Error", JOptionPane.ERROR_MESSAGE);                 
+                    JOptionPane.showMessageDialog(frame, "Can not step there!", "Error", JOptionPane.ERROR_MESSAGE);                 
                 }
                 
                 COLOR winner = renjuBoard.checkBoard();                
