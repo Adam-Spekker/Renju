@@ -114,11 +114,16 @@ public class Board {
        
        }
        
+       public boolean isValid(int x, int y) {
+           return board[x][y].getPiece() == null; 
+           
+       }
+       
       
        
        public void putPiece(int x, int y) throws InvalidStepException, GameFinishedException {
             if (!isFinished) {
-                if (board[x][y].getPiece() == null) {
+                if (isValid(x,y)) {
                     board[x][y].addPiece(new Piece());
                     lastField=board[x][y];
                     this.update();

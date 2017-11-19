@@ -6,7 +6,7 @@
 package renju;
 
 import renju.interf.*;
-import renju.board.Board;
+import renju.board.*;
 
 
 
@@ -20,7 +20,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Board board = new  Board();
+        Board board = new  RenjuBoard();
         
       
         
