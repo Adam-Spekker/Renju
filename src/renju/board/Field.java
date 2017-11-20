@@ -36,7 +36,7 @@ public class Field {
         return (p==null) ? COLOR.EMPTY : p.getColor();
     }
     
-    int getX() {
+    public int getX() {
         return x;
     }
     
@@ -44,7 +44,7 @@ public class Field {
         return p;
     }
   
-    int getY() {
+    public int getY() {
         return y;
     }
     

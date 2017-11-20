@@ -27,10 +27,12 @@ import renju.board.Piece.COLOR;
  *
  * @author archghoul
  */
-public final class RenjuUI extends JFrame implements RenjuInterface{
-    JFrame frame;
+public final class RenjuUI extends JFrame implements RenjuInterface{    
     Board renjuBoard;
+    COLOR color;
+    static int frameCnt = 0;
     
+    JFrame frame;
     JPanel main;
     JPanel bottom;
     JPanel board;
@@ -59,15 +61,16 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     public RenjuUI() {
         
         ///setup frame to be visible and exit on X
+        size = 600;
+        fieldSize = (int) (size / 15);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
         this.setResizable(false);
-        this.setLocation(100, 20);        
+        this.setLocation(100+(size+10)*frameCnt, 20);        
         this.setTitle("Renju");
-        frame = this;
+        
         message = new JOptionPane();
         
-        size = 900;
-        fieldSize = (int) (size / 15);
+       
         
         
         ///create menu action listener  
@@ -100,10 +103,11 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         this.getContentPane().add(main, BorderLayout.NORTH);
         this.getContentPane().add(bottom, BorderLayout.SOUTH);
         
+        
         this.pack();
         this.setVisible(true);
         
-        
+        frameCnt++;
         
        // bottomLabel.setText(infc.toString());
     }
@@ -114,6 +118,12 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         renjuBoard.setInterface(this);
         bottomLabel.setText(renjuBoard.getCurrentPlayer().toString());        
     }
+    
+    @Override
+    public void setColor(COLOR c) {
+        color = c;
+        this.setTitle("Renju " + c.toString());
+    }
         
     @Override
     public Board getBoard() {
@@ -122,7 +132,12 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     
     @Override 
     public void update() {
+        String str = renjuBoard.getCurrentPlayer() == color ? "Your turn." : "AI turn"; 
+        bottomLabel.setText(str); 
         board.repaint();
+                       
+        if (COLOR.EMPTY != renjuBoard.getWinner())                   
+                    JOptionPane.showMessageDialog(frame, (renjuBoard.getWinner().toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
     }
     
     /// panel with background image
@@ -271,22 +286,26 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
             
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (renjuBoard.getCurrentPlayer() != color) {
+                    JOptionPane.showMessageDialog(frame, "Not your turn", "Warning", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
+                
                 int x = ((int) e.getPoint().getX()/fieldSize);
                 int y = ((int) e.getPoint().getY()/fieldSize);                
-                bottomLabel.setText("Mouse coord: " + (x + 1)+ " " + (y + 1) );
+                //bottomLabel.setText("Mouse coord: " + (x + 1)+ " " + (y + 1) );
                 
                 try { 
                     renjuBoard.putPiece(y, x);
                 } catch (GameFinishedException ex) {
                     JOptionPane.showMessageDialog(frame, "Game has ended, you can not move any more!", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
+                    
                 } catch (InvalidStepException ex) {
                     JOptionPane.showMessageDialog(frame, "Can not step there!", "Error", JOptionPane.ERROR_MESSAGE);                 
                 }
                 
-                COLOR winner = renjuBoard.checkBoard();                
-                if (COLOR.EMPTY != winner)                   
-                    JOptionPane.showMessageDialog(frame, (winner.toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
+                
                                   
             }
 

@@ -22,9 +22,13 @@ public class Board {
        boolean isFinished;
        ArrayList<RenjuInterface> interfaceList; 
        
+       COLOR winner;
+       
        public Board() {
+    
           board = new Field[15][15];
           isFinished = false;
+          winner = COLOR.EMPTY;
           
           for (int i = 0; i < 15 ; i++)
               for (int j = 0; j < 15 ; j++)
@@ -40,7 +44,8 @@ public class Board {
            interfaceList.add(i);           
        }
        
-       private void update() {
+       private void update() {           
+           winner=this.checkBoard();
            for (RenjuInterface iter : interfaceList) {
                iter.update();
            }
@@ -51,6 +56,8 @@ public class Board {
             currentPlayer = COLOR.BLACK;
             Piece.resetCnt();
             currentTurn = 1;
+            
+            winner = COLOR.EMPTY;
            
            for (int i = 0; i < 15 ; i++)
               for (int j = 0; j < 15 ; j++)
@@ -181,6 +188,13 @@ public class Board {
            return currentPlayer;
        }
        
+       public Field getLastField() {
+           return lastField;
+       }
+       
+       public COLOR getWinner() {
+           return winner;
+       }
        
        
 }

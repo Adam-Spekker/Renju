@@ -20,7 +20,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Board board = new  RenjuBoard();
+        Board board = new  Board();
         
       
         
@@ -31,15 +31,18 @@ public class Main {
 //            board.checkBoard();
 //       }
        
-       RenjuInterface ui = new RenjuUI();
-      // RenjuInterface ui2 = new RenjuUI();
-       //RenjuInterface ai = new RenjuAI();
+       RenjuInterface ui = new RenjuUI();      
        ui.setBoard(board);
-      // ui2.setBoard(board);
-      // ai.setBoard(board);
+       ui.setColor(Piece.COLOR.BLACK);
        
        
-       
+//       RenjuInterface ui2 = new RenjuUI();
+//       ui2.setBoard(board);
+//       ui2.setColor(Piece.COLOR.WHITE);
+     
+       RenjuInterface ai = new RenjuAI();
+       ai.setBoard(board);
+       ai.setColor(Piece.COLOR.WHITE);
         
        // board.checkBoard();
     }

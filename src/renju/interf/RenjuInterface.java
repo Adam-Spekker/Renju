@@ -6,6 +6,7 @@
 package renju.interf;
 
 import renju.board.Board;
+import renju.board.Piece.COLOR;
 
 
 
@@ -14,6 +15,8 @@ import renju.board.Board;
  * @author archghoul
  */
 public interface RenjuInterface {
+    
+    public void setColor(COLOR c);
     
     public void setBoard(Board b);
     
