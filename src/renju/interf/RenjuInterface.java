@@ -14,7 +14,7 @@ import renju.board.Piece.COLOR;
  *
  * @author archghoul
  */
-public interface RenjuInterface {
+public interface RenjuInterface extends Runnable{
     
     public void setColor(COLOR c);
     

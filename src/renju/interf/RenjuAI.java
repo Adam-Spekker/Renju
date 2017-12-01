@@ -17,13 +17,13 @@ import renju.exception.BoardException;
  * @author archghoul
  */
 public class RenjuAI implements RenjuInterface{
-    Board renjuBoard;
+    Board gameBoard;
     COLOR color;
     
     @Override
     public void setBoard(Board b) {
-        renjuBoard = b;
-        renjuBoard.setInterface(this);
+        gameBoard = b;
+      //  gameBoard.setInterface(this);
     }
     
     @Override
@@ -38,26 +38,19 @@ public class RenjuAI implements RenjuInterface{
  
     @Override
     public void update() {
-        if (renjuBoard.getWinner() == COLOR.EMPTY)
-            if (renjuBoard.getCurrentPlayer() == color ){
-               
-            
-                //this.moveSystematic(renjuBoard.getLastField().getX(),renjuBoard.getLastField().getY());
-                this.moveRandom(renjuBoard.getLastField().getX(),renjuBoard.getLastField().getY());
-          
-            }
+        
         
     }
     
     void moveSystematic(int x, int y) {      
         for (int i = 1; i < 6; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    int xc = x+i*j;
-                    int yc = y+i*k;
+            for (int j = (-1)*i; j <= i; j++) {
+                for (int k = (-1)*i; k <= i; k++) {
+                    int xc = x+j;
+                    int yc = y+k;
                     if ((xc<= 15) && (xc>=0) && (yc>=0) && (yc<=15)) {
                         try {
-                            renjuBoard.putPiece(xc, yc);                              
+                            gameBoard.putPiece(xc, yc, color);                              
                         } catch (BoardException e){
                             continue;
                         }
@@ -72,6 +65,12 @@ public class RenjuAI implements RenjuInterface{
         Random rand = new Random();
         int radius = 1;
         
+//        try {
+//            Thread.sleep(1000);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(RenjuAI.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        
         
         while (true) {       
             
@@ -83,7 +82,7 @@ public class RenjuAI implements RenjuInterface{
             
             if ((xc<= 15) && (xc>=0) && (yc>=0) && (yc<=15)) {
                 try {
-                    renjuBoard.putPiece(xc, yc);                              
+                    gameBoard.putPiece(xc, yc, color);                              
                 } catch (BoardException e){
                     continue;
                 }
@@ -91,6 +90,34 @@ public class RenjuAI implements RenjuInterface{
             }
         }
         
+    }
+
+    @Override
+    public void run() {
+        //int i = 1;
+        while (true){
+            try {
+                    Thread.sleep(1000);
+                    
+                   // System.out.println(""+i +" "+ gameBoard.getCurrentPlayer() );
+                } catch (InterruptedException ex) {
+                   System.out.println("interruptexception");
+                }
+            if(gameBoard.getWinner() == COLOR.EMPTY){
+              //  i++;
+                System.out.println(gameBoard.getCurrentPlayer());
+
+                if (gameBoard.getCurrentPlayer() == color){
+                    System.out.println("white turn");
+                    if(gameBoard.getWinner() == COLOR.EMPTY){
+                    //this.moveSystematic(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());
+                      this.moveRandom(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());     
+
+                    }// System.out.println("white moved");
+                }
+
+            }
+        }
     }
     
 }

@@ -18,6 +18,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 import javax.swing.*;
@@ -28,7 +35,7 @@ import renju.board.Piece.COLOR;
  * @author archghoul
  */
 public final class RenjuUI extends JFrame implements RenjuInterface{    
-    Board renjuBoard;
+    Board gameBoard;
     COLOR color;
     static int frameCnt = 0;
     
@@ -44,7 +51,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     JMenuBar menuBar;
     JMenu menuFile;
     JMenu menuHelp;
-    JMenuItem menuItemNew, menuItemSave, menuItemLoad, menuItemExit,
+    JMenuItem menuItemNew, menuItemSave, menuItemLoad, menuItemSwitch,
             menuItemAbout, menuItemRules;
     
     JLabel bottomLabel;    
@@ -69,9 +76,6 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         this.setTitle("Renju");
         
         message = new JOptionPane();
-        
-       
-        
         
         ///create menu action listener  
         menuAL = new MenuActionListener();
@@ -114,9 +118,10 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     
     @Override
     public void setBoard(Board b) {
-        renjuBoard = b;
-        renjuBoard.setInterface(this);
-        bottomLabel.setText(renjuBoard.getCurrentPlayer().toString());        
+        gameBoard = b;
+        //gameBoard.setInterface(this);
+       // bottomLabel.setText(gameBoard.getCurrentPlayer().toString()); 
+        
     }
     
     @Override
@@ -127,17 +132,34 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         
     @Override
     public Board getBoard() {
-        return renjuBoard;
+        return gameBoard;
     }
     
     @Override 
     public void update() {
-        String str = renjuBoard.getCurrentPlayer() == color ? "Your turn." : "AI turn"; 
+        String str = gameBoard.getCurrentPlayer() == color ? "Your turn." : "AI turn"; 
         bottomLabel.setText(str); 
         board.repaint();
                        
-        if (COLOR.EMPTY != renjuBoard.getWinner())                   
-                    JOptionPane.showMessageDialog(frame, (renjuBoard.getWinner().toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
+        if (COLOR.EMPTY != gameBoard.getWinner()){              
+                    JOptionPane.showMessageDialog(frame, (gameBoard.getWinner().toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
+                    
+        }
+    }
+
+    @Override
+    public void run() {
+        while (true){
+            gameBoard.update();
+            try {
+                Thread.sleep(40);
+            } catch (InterruptedException ex) {
+                System.out.println("userInterruptexception");
+            }
+            
+            
+        }
+        
     }
     
     /// panel with background image
@@ -169,7 +191,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                     //g.drawLine(distX, distY + i*2*distY, distX + 14*2*distX , distY + i*2*distY);
                 }
                 
-                COLOR[][] currentState = renjuBoard.getBoardColor();
+                COLOR[][] currentState = gameBoard.getBoardColor();
                 for(int i = 0; i < 15; i++) {
                     for(int j = 0; j < 15; j++) {
                         switch (currentState[j][i].toChar()) {  
@@ -227,11 +249,13 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
             menuItemLoad.addActionListener(menuAL);
             menuFile.add(menuItemLoad);
             menuFile.addSeparator();
+            
+            menuItemSwitch = new JMenuItem("Switch color");
+            menuItemSwitch.setMnemonic(KeyEvent.VK_W);        
+            menuItemSwitch.addActionListener(menuAL);
+            menuFile.add(menuItemSwitch);
 
-            menuItemExit = new JMenuItem("Quit");
-            menuItemExit.setMnemonic(KeyEvent.VK_Q);        
-            menuItemExit.addActionListener(menuAL);
-            menuFile.add(menuItemExit);
+          
 
 
             ///create help menu and add it to the menu bar
@@ -267,12 +291,21 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                
                if (command.equals("New Game")) {
                    JOptionPane.showMessageDialog(frame, "New game initialized");
-                   renjuBoard.reset();                                 
+                   gameBoard.reset();                                 
                } 
                
-               if (command.equals("Quit")) {
-                   
-               }
+               if (command.equals("Save")) {
+                   JOptionPane.showMessageDialog(frame, "Game Saved");
+                   save("save.dat");                                 
+               } 
+               
+               if (command.equals("Load")) {
+                   load("save.dat");
+                  // JOptionPane.showMessageDialog(frame, "New game initialized");
+                  // gameBoard.reset();                                 
+               } 
+               
+              
                
 //               else {
 //                   JOptionPane.showMessageDialog(frame, "No functionality yet!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -286,7 +319,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
             
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (renjuBoard.getCurrentPlayer() != color) {
+                if (gameBoard.getCurrentPlayer() != color) {
                     JOptionPane.showMessageDialog(frame, "Not your turn", "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
                 }
@@ -297,7 +330,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                 //bottomLabel.setText("Mouse coord: " + (x + 1)+ " " + (y + 1) );
                 
                 try { 
-                    renjuBoard.putPiece(y, x);
+                    gameBoard.putPiece(y, x, color);
                 } catch (GameFinishedException ex) {
                     JOptionPane.showMessageDialog(frame, "Game has ended, you can not move any more!", "Error", JOptionPane.ERROR_MESSAGE);
                     
@@ -330,5 +363,44 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
             }
         }
         
+        public void save(String str) {
+            try {
+                FileOutputStream fileOut = new FileOutputStream(str);
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                out.writeObject(gameBoard);
+                out.close();
+                fileOut.close();
+                System.out.println("Game Saved ("+str+")");
+             } catch (IOException i) {
+                i.printStackTrace();
+             }
+            
+        }
+        
+        public void load(String str) {
+            try {
+                FileInputStream fileIn = new FileInputStream(str);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                gameBoard = (Board) in.readObject();
+                in.close();
+                fileIn.close();
+                gameBoard.updateInterface();
+                
+                
+                
+                System.out.println("Game Loaded ("+str+")");
+                System.out.println("Current Player("+gameBoard.getCurrentPlayer()+")");
+                System.out.println("Game Loaded ("+gameBoard.getLastField()+")");
+               // System.out.println("Game Loaded ("+str+")");
+                
+                
+             } catch (IOException i) {
+                i.printStackTrace();                
+             } catch (ClassNotFoundException c) {
+                System.out.println("Board class not found");
+                c.printStackTrace();               
+             }
+            
+        }
         
 }

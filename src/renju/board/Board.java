@@ -5,6 +5,7 @@
  */
 package renju.board;
 
+
 import java.util.ArrayList;
 import renju.exception.*;
 import renju.interf.RenjuInterface;
@@ -14,17 +15,18 @@ import renju.board.Piece.*;
  *
  * @author archghoul
  */
-public class Board {
+public class Board implements java.io.Serializable{
        Field[][] board;
        COLOR currentPlayer;
        int currentTurn;
        Field lastField;
        boolean isFinished;
-       ArrayList<RenjuInterface> interfaceList; 
+       static ArrayList<RenjuInterface> interfaceList;
+      
        
        COLOR winner;
        
-       public Board() {
+       public Board()  {
     
           board = new Field[15][15];
           isFinished = false;
@@ -37,21 +39,38 @@ public class Board {
           currentPlayer = COLOR.BLACK;
           Piece.resetCnt();
           currentTurn = 1;
-          interfaceList = new ArrayList<>();          
+          interfaceList = new ArrayList<>();     
+          
        } 
-       
-       public void setInterface(RenjuInterface i) {               
-           interfaceList.add(i);           
+     
+       public void updateInterface(){
+           for(RenjuInterface iter : interfaceList) {
+               iter.setBoard(this);
+           }
        }
        
-       private void update() {           
+       public void setInterface(RenjuInterface i) { 
+           i.setBoard(this);
+           interfaceList.add(i);
+       }
+       
+       public void update() {           
            winner=this.checkBoard();
+           
            for (RenjuInterface iter : interfaceList) {
+               synchronized (iter){
                iter.update();
+               }
            }
+           
+            if(winner != COLOR.EMPTY ){   
+               
+              this.reset();
+            }
+           
         }
        
-       public void reset() {
+       synchronized public void reset() {
             isFinished = false;
             currentPlayer = COLOR.BLACK;
             Piece.resetCnt();
@@ -64,7 +83,8 @@ public class Board {
                   board[i][j].deletePiece();
            
            lastField = null;
-           this.update();
+           
+           this.notify();
            
        }
        
@@ -82,7 +102,7 @@ public class Board {
            return cnt;
        }
        
-       private boolean checkLine(int x, int y, int v, int h, int max) {
+        private boolean checkLine(int x, int y, int v, int h, int max) {
            // vertical check
            int before;
            int after;
@@ -119,11 +139,12 @@ public class Board {
            int y = lastField.getY();
            
            if (checkLine(x,y,1,0,4) || checkLine(x,y,0,1,4) || checkLine(x,y,1,1,4) || checkLine(x,y,-1,1,4)) {   
-               isFinished = true;
+               isFinished = true;               
                return lastField.getColor();
            } else {
                return COLOR.EMPTY;
            }
+           
            
        }
        
@@ -137,27 +158,31 @@ public class Board {
        }
        
        public boolean isValid(int x, int y) {
-           return board[x][y].getPiece() == null; 
-           
+           if(x < 0 || y < 0 || x > 14 || y > 14)
+                return board[x][y].getPiece() == null; 
+           else return false;           
        }
        
       
        
-       public void putPiece(int x, int y) throws InvalidStepException, GameFinishedException {
+       synchronized public void putPiece(int x, int y, COLOR c) throws InvalidStepException, GameFinishedException {
             if (!isFinished) {
                 if (isValid(x,y)) {
-                    board[x][y].addPiece(new Piece());
+                    board[x][y].addPiece(new Piece(c));
                     lastField = board[x][y];
                     currentTurn++; 
                     currentPlayer = currentPlayer == COLOR.BLACK ? COLOR.WHITE : COLOR.BLACK;
-                    this.update();                    
+                    //this.notify();                  
                 } else {
+                   // this.notify();
                     throw new InvalidStepException();
                 }
               
            } else {
+              // this.notify();
                throw new GameFinishedException();
            }
+           
        }
        
        
@@ -195,6 +220,8 @@ public class Board {
        public COLOR getWinner() {
            return winner;
        }
+       
+       
        
        
 }

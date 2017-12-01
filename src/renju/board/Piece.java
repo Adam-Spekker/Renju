@@ -11,7 +11,7 @@ package renju.board;
  */
 
 
-public class Piece {
+public class Piece implements java.io.Serializable{
 
    
     public enum COLOR { 
@@ -41,6 +41,7 @@ public class Piece {
     
     Piece() {
         serial = count;
+       
         if (serial % 2 == 0) {
             color = COLOR.WHITE;
         } else {
@@ -53,6 +54,7 @@ public class Piece {
     Piece(COLOR c) {
         serial = count; 
         color = c;
+        count++;
     }
     
     @Override

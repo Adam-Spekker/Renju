@@ -41,8 +41,8 @@ public class RenjuBoard extends Board{
     public boolean isValid(int x, int y) {
         
         ///Empty?
-        if (board[x][y].getPiece() != null)
-            return false;
+        if(x < 0 || y < 0 || x > 14 || y > 14 || board[x][y].getPiece() != null)
+                return false;
         
         
         ///First moves check
@@ -54,10 +54,10 @@ public class RenjuBoard extends Board{
             }
         
         ///Black moves restrictions
-//        if (currentPlayer == COLOR.BLACK) {
-//           ///Check possible double 3x3 forks
-//           int cnt =0;
-//           
+        if (currentPlayer == COLOR.BLACK) {
+           ///Check possible double 3x3 forks
+           int cnt =0;
+           
 //           for (int i = -1; i<2; i++) {
 //               for (int j = -1; j<2; j++) {
 //                   if(i==0 && j==0)
@@ -66,10 +66,10 @@ public class RenjuBoard extends Board{
 //                        cnt++;
 //               }
 //           }
-//           
-//           
-//            
-//        }
+           
+           
+            
+        }
         
         
         return true;

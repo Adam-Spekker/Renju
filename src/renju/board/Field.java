@@ -12,7 +12,7 @@ import renju.board.Piece.*;
  *
  * @author archghoul
  */
-public class Field {
+public class Field implements java.io.Serializable{
     int x,y;
     Piece p;
  

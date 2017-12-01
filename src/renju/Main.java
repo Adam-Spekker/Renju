@@ -19,8 +19,8 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        Board board = new  Board();
+    public static void main(String[] args) throws InterruptedException {
+        Board board = new  RenjuBoard();
         
       
         
@@ -31,8 +31,8 @@ public class Main {
 //            board.checkBoard();
 //       }
        
-       RenjuInterface ui = new RenjuUI();      
-       ui.setBoard(board);
+       RenjuUI ui = new RenjuUI();      
+       board.setInterface(ui);
        ui.setColor(Piece.COLOR.BLACK);
        
        
@@ -40,11 +40,25 @@ public class Main {
 //       ui2.setBoard(board);
 //       ui2.setColor(Piece.COLOR.WHITE);
      
-       RenjuInterface ai = new RenjuAI();
-       ai.setBoard(board);
+       RenjuAI ai = new RenjuAI();
+       board.setInterface(ai);
        ai.setColor(Piece.COLOR.WHITE);
+       
+       System.out.println(board.toString());
+       new Thread(ui).start();
+       new Thread(ai).start();
+//       Thread a;
+//        a = new Thread(ai);
+//        a.start();
+        
+//        while (true){
+//            System.out.println("threadalive :" + a.isAlive());
+//            Thread.sleep(1000);
+//        }
+       
         
        // board.checkBoard();
+       
     }
     
 }
