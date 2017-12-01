@@ -24,4 +24,6 @@ public interface RenjuInterface extends Runnable{
     
     public void update();
     
+    public COLOR getColor();
+    
 }

@@ -129,6 +129,11 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         color = c;
         this.setTitle("Renju " + c.toString());
     }
+    
+    @Override
+    public COLOR getColor() {
+        return color;
+    }
         
     @Override
     public Board getBoard() {
@@ -305,6 +310,12 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                   // gameBoard.reset();                                 
                } 
                
+               if (command.equals("Switch color")) {
+                   gameBoard.swapInterfaceColor();
+                   gameBoard.reset();
+                  // JOptionPane.showMessageDialog(frame, "New game initialized");
+                  // gameBoard.reset();                                 
+               } 
               
                
 //               else {

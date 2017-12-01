@@ -32,6 +32,11 @@ public class RenjuAI implements RenjuInterface{
     }
     
     @Override
+    public COLOR getColor() {
+        return color;
+    }
+    
+    @Override
     public Board getBoard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -62,6 +67,7 @@ public class RenjuAI implements RenjuInterface{
     }
     
     void moveRandom(int x, int y) {
+        
         Random rand = new Random();
         int radius = 1;
         
@@ -111,13 +117,22 @@ public class RenjuAI implements RenjuInterface{
                     System.out.println("white turn");
                     if(gameBoard.getWinner() == COLOR.EMPTY){
                     //this.moveSystematic(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());
-                      this.moveRandom(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());     
-
+                       if(gameBoard.getLastField() != null){
+                            this.moveRandom(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());     
+                       }else {
+                           try {
+                                gameBoard.putPiece(7, 7, color);                              
+                            } catch (BoardException e){
+                                continue;
+                            }
+                       }
                     }// System.out.println("white moved");
                 }
 
             }
         }
     }
+
+    
     
 }

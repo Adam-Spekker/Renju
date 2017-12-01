@@ -54,6 +54,12 @@ public class Board implements java.io.Serializable{
            interfaceList.add(i);
        }
        
+       public void swapInterfaceColor(){
+           for(RenjuInterface iter : interfaceList) {
+               iter.setColor(iter.getColor() == COLOR.BLACK ? COLOR.WHITE : COLOR.BLACK);
+           }           
+       }
+       
        public void update() {           
            winner=this.checkBoard();
            
