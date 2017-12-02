@@ -15,7 +15,7 @@ import renju.board.Piece.COLOR;
  */
 public class RenjuBoard extends Board{
     
-    Fork[] forks;
+    static Fork[] forks;
     
     public class Fork {
         int len;
@@ -78,12 +78,12 @@ public class RenjuBoard extends Board{
            }
            
            
-           for (int i = 0; i<3; i++) {
-               System.out.println(""+forks[i*3].toString()+ 
-                                    forks[i*3+1].toString()+
-                                    forks[i*3+2].toString());
-           }
-           System.out.println(""); 
+//           for (int i = 0; i<3; i++) {
+//               System.out.println(""+forks[i*3].toString()+ 
+//                                    forks[i*3+1].toString()+
+//                                    forks[i*3+2].toString());
+//           }
+//           System.out.println(""); 
            
            
             
@@ -170,11 +170,7 @@ public class RenjuBoard extends Board{
                    }
                 }
            }
-           
-           
-           
-           
-           
+          
            return new Fork(cnt,end,open);
     }
     

@@ -19,7 +19,7 @@ public class Main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         Board board = new  RenjuBoard();
         
       
@@ -35,16 +35,16 @@ public class Main {
        board.setInterface(ui);
        ui.setColor(Piece.COLOR.BLACK);
        
-       
-       RenjuInterface ai= new RenjuUI();
-       board.setInterface(ai);
-       ai.setColor(Piece.COLOR.WHITE);
-     
-//       RenjuAI ai = new RenjuAI();
+//       
+//       RenjuInterface ai= new RenjuUI();
 //       board.setInterface(ai);
 //       ai.setColor(Piece.COLOR.WHITE);
+    
+       RenjuAI ai = new RenjuAI();
+       board.setInterface(ai);
+       ai.setColor(Piece.COLOR.WHITE);
        
-       System.out.println(board.toString());
+      // System.out.println(board.toString());
        new Thread(ui).start();
        new Thread(ai).start();
        

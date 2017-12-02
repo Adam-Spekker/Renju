@@ -7,6 +7,8 @@ package renju.board;
 
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import renju.exception.*;
 import renju.interf.RenjuInterface;
 import renju.board.Piece.*;
@@ -60,23 +62,9 @@ public class Board implements java.io.Serializable{
            }           
        }
        
-       public void update() {           
-           winner=this.checkBoard();
-           
-           for (RenjuInterface iter : interfaceList) {
-               synchronized (iter){
-               iter.update();
-               }
-           }
-           
-            if(winner != COLOR.EMPTY ){   
-               
-              this.reset();
-            }
-           
-        }
        
-       synchronized public void reset() {
+       
+      public void reset() {
             isFinished = false;
             currentPlayer = COLOR.BLACK;
             Piece.resetCnt();
@@ -90,7 +78,7 @@ public class Board implements java.io.Serializable{
            
            lastField = null;
            
-           this.notify();
+           
            
        }
        
@@ -163,6 +151,25 @@ public class Board implements java.io.Serializable{
        
        }
        
+       public int getFieldSerial(int x, int y){
+          if(x < 0 || y < 0 || x > 14 || y > 14){
+              return 0;
+          }else {
+                Piece p = board[x][y].getPiece();
+                if(p == null) {
+                    return 0;
+                } else {
+                    return p.getSerial();
+                }
+          } 
+          
+       }
+       
+       public Field getField(int x, int y){
+          return board[x][y];
+          
+       }
+       
        public boolean isValid(int x, int y) {
            if(x < 0 || y < 0 || x > 14 || y > 14)
                 return board[x][y].getPiece() == null; 
@@ -178,14 +185,15 @@ public class Board implements java.io.Serializable{
                     lastField = board[x][y];
                     currentTurn++; 
                     currentPlayer = currentPlayer == COLOR.BLACK ? COLOR.WHITE : COLOR.BLACK;
-                    //this.notify();                  
+                      
+                    winner = checkBoard();
                 } else {
-                   // this.notify();
+                  
                     throw new InvalidStepException();
                 }
               
            } else {
-              // this.notify();
+             
                throw new GameFinishedException();
            }
            

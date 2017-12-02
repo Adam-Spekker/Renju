@@ -9,6 +9,7 @@ import renju.board.*;
 import renju.exception.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -23,6 +24,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 
@@ -61,7 +68,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     int fieldSize;
     String bottomLabelString;
     
-    boolean winnerAnnounced;
+    boolean winnerNotified;
     
     
    
@@ -69,7 +76,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     public RenjuUI() {
         
         ///setup frame to be visible and exit on X
-        size = 600;
+        size = 800;
         fieldSize = (int) (size / 15);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
         this.setResizable(false);
@@ -87,7 +94,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                
         ///create panels
         main = new JPanel(new BorderLayout());
-        board = new BoardPanel("wood2.jpg");
+        board = new BoardPanel("textures/wood2.jpg");
         bottom = new JPanel(new BorderLayout());
                 
         ///set up bottom information field
@@ -141,24 +148,31 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         return gameBoard;
     }
     
+    public boolean getIsNotified() {
+        return winnerNotified;
+    }
+    
+    
     @Override 
     public void update() {
         String str = gameBoard.getCurrentPlayer() == color ? "Your turn." : "AI turn"; 
         bottomLabel.setText(str); 
         board.repaint();
                        
-        if (COLOR.EMPTY != gameBoard.getWinner() && !winnerAnnounced){              
+        if (COLOR.EMPTY != gameBoard.getWinner())  {
+            if (!winnerNotified) {
                     JOptionPane.showMessageDialog(frame, (gameBoard.getWinner().toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
-                    winnerAnnounced = true;
+                    this.winnerNotified = true;
+            }
         }else {
-            winnerAnnounced = false;
+            this.winnerNotified = false;
         }
     }
 
     @Override
     public void run() {
         while (true){
-            gameBoard.update();
+            update();
             try {
                 Thread.sleep(40);
             } catch (InterruptedException ex) {
@@ -174,13 +188,39 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     
         public class BoardPanel extends JPanel {
            
-            private Image imgBG, imgBlack, imgWhite, currImg;
+            private Image imgBG, currImg;
+            private ArrayList<Image> imgBlack, imgWhite; 
             
-            public BoardPanel(String img) {                
-                this.imgBG = new ImageIcon(img).getImage();
-                this.imgBlack = new ImageIcon("Haematit.png").getImage();
-                this.imgWhite = new ImageIcon("Amber.png").getImage();
-                this.currImg = null;
+            public BoardPanel(String str) {                
+                imgBG = new ImageIcon(str).getImage();
+                currImg = null;
+                
+                imgBlack = new ArrayList<>();
+                imgWhite = new ArrayList<>();
+                
+                int i =0;
+                while(true){
+                     Image img = new ImageIcon("textures/haematit"+i+".png").getImage();
+                     if(img.getWidth(null) == -1){
+                        break;
+                     }
+                     imgBlack.add(img);  
+                     i++;
+                }
+                
+                i =0;
+                while(true){
+                     Image img = new ImageIcon("textures/amber"+i+".png").getImage();
+                     if(img.getWidth(null) == -1){
+                        break;
+                     }
+                     imgWhite.add(img);
+                     i++;
+                }
+                
+//                imgBlack= new ImageIcon("textures/haematit0.png").getImage();
+//                imgWhite = new ImageIcon("textures/amber0.png").getImage();
+                
             }
             
             @Override
@@ -199,17 +239,27 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                     //g.drawLine(distX, distY + i*2*distY, distX + 14*2*distX , distY + i*2*distY);
                 }
                 
+                //g.drawOval(fieldSize/2 + 3*fieldSize -3, fieldSize/2 + 3*fieldSize -3, 7, 7);
+                g.fillOval(fieldSize/2 + 3*fieldSize -3, fieldSize/2 + 3*fieldSize -3, 7, 7);
+                g.fillOval(fieldSize/2 + 11*fieldSize -3, fieldSize/2 + 3*fieldSize -3, 7, 7);
+                g.fillOval(fieldSize/2 + 3*fieldSize -3, fieldSize/2 + 11*fieldSize -3, 7, 7);
+                g.fillOval(fieldSize/2 + 11*fieldSize -3, fieldSize/2 + 11*fieldSize -3, 7, 7);
+                g.fillOval(fieldSize/2 + 7*fieldSize -3, fieldSize/2 + 7*fieldSize -3, 7, 7);
+                
+                
+               g.setColor(Color.WHITE);
+                
                 COLOR[][] currentState = gameBoard.getBoardColor();
                 for(int i = 0; i < 15; i++) {
                     for(int j = 0; j < 15; j++) {
                         switch (currentState[j][i].toChar()) {  
                                 case 'B' :                                     
-                                    g.setColor(Color.BLACK);
-                                    currImg = imgBlack;
+                                    //g.setColor(Color.WHITE);
+                                    currImg = imgBlack.get((gameBoard.getFieldSerial(j, i)/2) % imgBlack.size());
                                     break;
                                 case 'W' : 
-                                    g.setColor(Color.WHITE);
-                                    currImg = imgWhite;
+                                    //g.setColor(Color.WHITE);
+                                    currImg = imgWhite.get((gameBoard.getFieldSerial(j, i)/2) % imgWhite.size());
                                     break;
                                     
                                 default: 
@@ -217,6 +267,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                                 }
                         //g.drawOval(i*fieldSize, j*fieldSize, fieldSize, fieldSize);
                         g.drawImage(currImg,i*fieldSize, j*fieldSize, fieldSize, fieldSize, null);
+                        g.drawString(new Integer(gameBoard.getFieldSerial(j, i)).toString(), fieldSize*i + fieldSize/2-6, fieldSize*j+ fieldSize/2+2);
                     }
                 }
                 
@@ -319,6 +370,26 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                   // JOptionPane.showMessageDialog(frame, "New game initialized");
                   // gameBoard.reset();                                 
                } 
+               
+               if (command.equals("About...")) {
+                    JOptionPane.showMessageDialog(frame, "Spekker Ádám prog3 nagyházi");
+                  // gameBoard.reset();                                 
+               } 
+               
+               if (command.equals("Rules of Renju")) {
+                    if (Desktop.isDesktopSupported()) {
+                        
+                        try {   
+                                Desktop.getDesktop().browse(new URL("http://www.renju.net/study/rifrules.php").toURI());
+                                
+                        } catch (URISyntaxException | IOException ex) {
+                              System.out.println("URI failure");
+                        }
+                        
+                    }   else {
+                        System.out.println("Not Supported");
+                    }               
+               } 
               
                
 //               else {
@@ -386,7 +457,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                 fileOut.close();
                // System.out.println("Game Saved ("+str+")");
              } catch (IOException i) {
-                JOptionPane.showMessageDialog(frame, "File is non-existent...", "Error", JOptionPane.ERROR_MESSAGE); 
+                JOptionPane.showMessageDialog(frame, "File error: "+str+i, "Error", JOptionPane.ERROR_MESSAGE); 
              }
             
         }

@@ -51,10 +51,11 @@ public class Piece implements java.io.Serializable{
     }
     
     ///only for debug
-    Piece(COLOR c) {
-        serial = count; 
+    Piece(COLOR c) {   
+        serial = count;         
         color = c;
-        count++;
+        count++; 
+           
     }
     
     @Override

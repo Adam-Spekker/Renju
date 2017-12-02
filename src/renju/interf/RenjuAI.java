@@ -37,9 +37,14 @@ public class RenjuAI implements RenjuInterface{
     
     @Override
     public Board getBoard() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return gameBoard;
     }
  
+    @Override
+    public boolean getIsNotified() {
+        return true;
+    }
+    
     @Override
     public void update() {
         
@@ -108,7 +113,7 @@ public class RenjuAI implements RenjuInterface{
                 } catch (InterruptedException ex) {
                    System.out.println("interruptexception");
                 }
-            if(gameBoard.getWinner() == COLOR.EMPTY){
+ 
               //  i++;
                 //System.out.println(gameBoard.getCurrentPlayer());
 
@@ -128,9 +133,11 @@ public class RenjuAI implements RenjuInterface{
                     }// System.out.println("white moved");
                 }
 
-            }
+            
         }
     }
+
+   
 
     
     
