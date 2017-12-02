@@ -23,8 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 
 import javax.swing.*;
@@ -61,6 +60,8 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     int size;
     int fieldSize;
     String bottomLabelString;
+    
+    boolean winnerAnnounced;
     
     
    
@@ -146,9 +147,11 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
         bottomLabel.setText(str); 
         board.repaint();
                        
-        if (COLOR.EMPTY != gameBoard.getWinner()){              
+        if (COLOR.EMPTY != gameBoard.getWinner() && !winnerAnnounced){              
                     JOptionPane.showMessageDialog(frame, (gameBoard.getWinner().toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
-                    
+                    winnerAnnounced = true;
+        }else {
+            winnerAnnounced = false;
         }
     }
 
@@ -381,9 +384,9 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                 out.writeObject(gameBoard);
                 out.close();
                 fileOut.close();
-                System.out.println("Game Saved ("+str+")");
+               // System.out.println("Game Saved ("+str+")");
              } catch (IOException i) {
-                i.printStackTrace();
+                JOptionPane.showMessageDialog(frame, "File is non-existent...", "Error", JOptionPane.ERROR_MESSAGE); 
              }
             
         }
@@ -399,17 +402,16 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                 
                 
                 
-                System.out.println("Game Loaded ("+str+")");
-                System.out.println("Current Player("+gameBoard.getCurrentPlayer()+")");
-                System.out.println("Game Loaded ("+gameBoard.getLastField()+")");
+//                System.out.println("Game Loaded ("+str+")");
+//                System.out.println("Current Player("+gameBoard.getCurrentPlayer()+")");
+//                System.out.println("Game Loaded ("+gameBoard.getLastField()+")");
                // System.out.println("Game Loaded ("+str+")");
                 
                 
              } catch (IOException i) {
-                i.printStackTrace();                
+                 JOptionPane.showMessageDialog(frame, "File is non-existent...", "Error", JOptionPane.ERROR_MESSAGE);      
              } catch (ClassNotFoundException c) {
-                System.out.println("Board class not found");
-                c.printStackTrace();               
+                 JOptionPane.showMessageDialog(frame, "Incompatible file...", "Error", JOptionPane.ERROR_MESSAGE);  
              }
             
         }

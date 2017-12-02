@@ -13,9 +13,15 @@ package renju.exception;
  */
 
 public class InvalidStepException extends BoardException {
+    public String str;
     
     public InvalidStepException() {
         
+    }
+        
+    
+    public InvalidStepException(String str) {
+        this.str=str;
     }
     
 }

@@ -20,21 +20,33 @@ public class RenjuBoard extends Board{
     public class Fork {
         int len;
         boolean isOpen;
+        int firstDiffColor;
         
-        int getLen() {return len;}
-        
+        int getLen() {return len;}        
         boolean getIsOpen() {return isOpen;}
+        int getFirstDiff() {return firstDiffColor;}
         
-        Fork (int a, boolean b) {
+        Fork (int a, int b, boolean c) {
             len = a;
-            isOpen = b;
+            firstDiffColor = b;
+            isOpen =c;
         }
+        
+        @Override
+        public String toString() {
+            return "["+ len + firstDiffColor + (isOpen ? "o":"c") +"]";
+        }
+        
     }
     
     
     public RenjuBoard() {
         super();     
-        forks  = new Fork[4];
+        forks  = new Fork[9];
+        ///[0][1][2]
+        ///[3][4][5] -> [4] wont be used
+        ///[6][7][8]
+        
     }
     
     @Override
@@ -55,17 +67,66 @@ public class RenjuBoard extends Board{
         
         ///Black moves restrictions
         if (currentPlayer == COLOR.BLACK) {
-           ///Check possible double 3x3 forks
-           int cnt =0;
+           ///collect forks
+           int k=0;
+           for (int i = -1; i<=1; i++){
+               for (int j = -1; j<=1; j++){
+                   forks[k] = checkDirection(x, y, i, j);
+                   
+                   k++;
+               }               
+           }
            
-//           for (int i = -1; i<2; i++) {
-//               for (int j = -1; j<2; j++) {
-//                   if(i==0 && j==0)
-//                       continue;
-//                    if (countFork(x,y,i,j,2) >= 2)
-//                        cnt++;
-//               }
-//           }
+           
+           for (int i = 0; i<3; i++) {
+               System.out.println(""+forks[i*3].toString()+ 
+                                    forks[i*3+1].toString()+
+                                    forks[i*3+2].toString());
+           }
+           System.out.println(""); 
+           
+           
+            
+            
+           ///Check possible double 3x3 forks
+           int txt = 0;
+           for(int i=0; i<4; i++){
+               if ((forks[i].len + forks[8-i].len >= 2) && forks[i].isOpen && forks[8-i].isOpen) {
+                   txt++;
+                }
+            }
+           if (txt >= 2) {
+               return false;
+           }
+               
+               
+               
+               
+           ///Check possible double 4x4 forks
+           int fxf = 0;
+           for(int i=0; i<4; i++){
+               if ((forks[i].len + forks[8-i].len >= 3) ) {
+                   fxf++;
+                }
+            }
+           if (fxf >= 2) {
+               return false;
+           }
+           
+           int ol = 0;
+           for(int i=0; i<4; i++){
+               if ((forks[i].len + forks[8-i].len >= 5) ) {
+                   return false;
+                }
+            }
+          
+           ///Check possible overlines
+           ///check vertical
+           ///check horizontal
+           ///check diagonal (x)
+           ///check diagonal (-x)
+           
+           
            
            
             
@@ -75,29 +136,46 @@ public class RenjuBoard extends Board{
         return true;
     }
     
-    int checkForkType(int x, int y, int v, int h) {
+    Fork checkDirection(int x, int y, int v, int h) {
            int cnt = 0;    
            int end = 0;
+           boolean open = true;
            
-           for (int i = 1; i < 6; i++) {
-               if(x-i*v < 0 || y-i*h < 0 || x-i*v > 14 || y-i*h > 14)
+           
+           for (int i = 1; i < 5; i++) {
+               if(x+i*v < 0 || y+i*h < 0 || x+i*v > 14 || y+i*h > 14) {
+                    end=i;
+                    if(end == 1) {open=false;}
+                    if(board[x+(i-1)*v][y+(i-1)*h].getColor() != COLOR.EMPTY) {
+                        open=false; 
+                    } 
                    break;
-               else 
-                   if (board[x-i*v][y-i*h].getColor() == lastField.getColor()) {
+               } else {
+                   if (board[x+i*v][y+i*h].getColor() == currentPlayer) {
                        cnt++;
-                   } else if(board[x-i*v][y-i*h].getColor() == null) {
                    } else {
-                       end = i;
-                       break;
-                   }   
-               if (cnt > 2){ }break;
+                        if(board[x+i*v][y+i*h].getColor() == COLOR.EMPTY) {
+                            if(board[x+(i-1)*v][y+(i-1)*h].getColor() == COLOR.EMPTY) {
+                                break;
+                            }                                         
+                        } else {
+                                end = i; 
+                                if(end == 1) {open=false;}
+                                if(board[x+(i-1)*v][y+(i-1)*h].getColor() != COLOR.EMPTY) {
+                                    open=false; 
+                                }
+                                break;
+                            }   
+//                      }      
+                   }
+                }
            }
            
            
            
            
            
-           return cnt;
+           return new Fork(cnt,end,open);
     }
     
     

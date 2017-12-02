@@ -6,8 +6,7 @@
 package renju.interf;
 
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import renju.board.Board;
 import renju.board.Piece.COLOR;
 import renju.exception.BoardException;
@@ -111,10 +110,10 @@ public class RenjuAI implements RenjuInterface{
                 }
             if(gameBoard.getWinner() == COLOR.EMPTY){
               //  i++;
-                System.out.println(gameBoard.getCurrentPlayer());
+                //System.out.println(gameBoard.getCurrentPlayer());
 
                 if (gameBoard.getCurrentPlayer() == color){
-                    System.out.println("white turn");
+                    //System.out.println("white turn");
                     if(gameBoard.getWinner() == COLOR.EMPTY){
                     //this.moveSystematic(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());
                        if(gameBoard.getLastField() != null){

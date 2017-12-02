@@ -20,10 +20,10 @@ public interface RenjuInterface extends Runnable{
     
     public void setBoard(Board b);
     
-    public Board getBoard();
-    
     public void update();
     
+    public Board getBoard();
+       
     public COLOR getColor();
     
 }
