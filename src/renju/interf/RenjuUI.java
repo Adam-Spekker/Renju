@@ -154,9 +154,8 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
     
     
     @Override 
-    public void update() {
-        String str = gameBoard.getCurrentPlayer() == color ? "Your turn." : "AI turn"; 
-        bottomLabel.setText(str); 
+    public void update() {        
+        String str;
         board.repaint();
                        
         if (COLOR.EMPTY != gameBoard.getWinner())  {
@@ -164,9 +163,12 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                     JOptionPane.showMessageDialog(frame, (gameBoard.getWinner().toString() + " Wins"), "WINNER" , JOptionPane.PLAIN_MESSAGE);
                     this.winnerNotified = true;
             }
+            str = "Game has ended"; 
         }else {
             this.winnerNotified = false;
+            str = gameBoard.getCurrentPlayer() == color ? "Your turn." : "AI turn";             
         }
+        bottomLabel.setText(str); 
     }
 
     @Override
@@ -407,8 +409,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                 if (gameBoard.getCurrentPlayer() != color) {
                     JOptionPane.showMessageDialog(frame, "Not your turn", "Warning", JOptionPane.WARNING_MESSAGE);
                     return;
-                }
-                
+                }           
                 
                 int x = ((int) e.getPoint().getX()/fieldSize);
                 int y = ((int) e.getPoint().getY()/fieldSize);                
@@ -417,8 +418,7 @@ public final class RenjuUI extends JFrame implements RenjuInterface{
                 try { 
                     gameBoard.putPiece(y, x, color);
                 } catch (GameFinishedException ex) {
-                    JOptionPane.showMessageDialog(frame, "Game has ended, you can not move any more!", "Error", JOptionPane.ERROR_MESSAGE);
-                    
+                    JOptionPane.showMessageDialog(frame, "Game has ended, you can not move any more!", "Error", JOptionPane.ERROR_MESSAGE);   
                 } catch (InvalidStepException ex) {
                     JOptionPane.showMessageDialog(frame, "Can not step there!", "Error", JOptionPane.ERROR_MESSAGE);                 
                 }

@@ -17,27 +17,7 @@ public class RenjuBoard extends Board{
     
     static Fork[] forks;
     
-    public class Fork {
-        int len;
-        boolean isOpen;
-        int firstDiffColor;
-        
-        int getLen() {return len;}        
-        boolean getIsOpen() {return isOpen;}
-        int getFirstDiff() {return firstDiffColor;}
-        
-        Fork (int a, int b, boolean c) {
-            len = a;
-            firstDiffColor = b;
-            isOpen =c;
-        }
-        
-        @Override
-        public String toString() {
-            return "["+ len + firstDiffColor + (isOpen ? "o":"c") +"]";
-        }
-        
-    }
+   
     
     
     public RenjuBoard() {

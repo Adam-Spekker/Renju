@@ -7,8 +7,6 @@ package renju.board;
 
 
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import renju.exception.*;
 import renju.interf.RenjuInterface;
 import renju.board.Piece.*;
@@ -225,6 +223,10 @@ public class Board implements java.io.Serializable{
        
        public COLOR getCurrentPlayer(){
            return currentPlayer;
+       }
+       
+       public int getCurrentTurn() {
+           return currentTurn;
        }
        
        public Field getLastField() {
