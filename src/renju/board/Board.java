@@ -169,9 +169,8 @@ public class Board implements java.io.Serializable{
        }
        
        public boolean isValid(int x, int y) {
-           if(x < 0 || y < 0 || x > 14 || y > 14)
-                return board[x][y].getPiece() == null; 
-           else return false;           
+           return !(x < 0 || y < 0 || x > 14 || y > 14 || board[x][y].getPiece() != null);      
+           
        }
        
       
