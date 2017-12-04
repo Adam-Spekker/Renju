@@ -35,17 +35,18 @@ public class Main {
        board.setInterface(ui);
        ui.setColor(Piece.COLOR.BLACK);
        
-//       
-//       RenjuInterface ai= new RenjuUI();
-//       board.setInterface(ai);
-//       ai.setColor(Piece.COLOR.WHITE);
-    
+       
+//       RenjuInterface ui2= new RenjuUI();
+//       board.setInterface(ui2);
+//       ui2.setColor(Piece.COLOR.EMPTY);
+//    
        RenjuAI ai = new RenjuAI();
        board.setInterface(ai);
        ai.setColor(Piece.COLOR.WHITE);
        
       // System.out.println(board.toString());
        new Thread(ui).start();
+       //new Thread(ui2).start();
        new Thread(ai).start();
        
        board = null;

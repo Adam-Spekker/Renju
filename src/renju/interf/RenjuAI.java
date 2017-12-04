@@ -47,7 +47,21 @@ public class RenjuAI implements RenjuInterface{
     
     @Override
     public void update() {
-        
+        if (gameBoard.getCurrentPlayer() == color){
+                    //System.out.println("white turn");
+                    if(gameBoard.getWinner() == COLOR.EMPTY){
+                    //this.moveSystematic(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());
+                       if(gameBoard.getLastField() != null){
+                            this.moveRandom(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());     
+                       }else {
+                           try {
+                                gameBoard.putPiece(7, 7, color);                              
+                            } catch (BoardException e){
+                                
+                            }
+                       }
+                    }// System.out.println("white moved");
+                }
         
     }
     
@@ -107,8 +121,9 @@ public class RenjuAI implements RenjuInterface{
         //int i = 1;
         while (true){
             try {
-                    Thread.sleep(1000);
                     
+                    Thread.sleep(1000);
+                    update();
                    // System.out.println(""+i +" "+ gameBoard.getCurrentPlayer() );
                 } catch (InterruptedException ex) {
                    System.out.println("interruptexception");
@@ -117,21 +132,7 @@ public class RenjuAI implements RenjuInterface{
               //  i++;
                 //System.out.println(gameBoard.getCurrentPlayer());
 
-                if (gameBoard.getCurrentPlayer() == color){
-                    //System.out.println("white turn");
-                    if(gameBoard.getWinner() == COLOR.EMPTY){
-                    //this.moveSystematic(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());
-                       if(gameBoard.getLastField() != null){
-                            this.moveRandom(gameBoard.getLastField().getX(),gameBoard.getLastField().getY());     
-                       }else {
-                           try {
-                                gameBoard.putPiece(7, 7, color);                              
-                            } catch (BoardException e){
-                                continue;
-                            }
-                       }
-                    }// System.out.println("white moved");
-                }
+                
 
             
         }

@@ -93,6 +93,7 @@ public class RenjuBoard extends Board{
                return false;
            }
            
+           ///Check possible overlines
            int ol = 0;
            for(int i=0; i<4; i++){
                if ((forks[i].len + forks[8-i].len >= 5) ) {
@@ -100,11 +101,8 @@ public class RenjuBoard extends Board{
                 }
             }
           
-           ///Check possible overlines
-           ///check vertical
-           ///check horizontal
-           ///check diagonal (x)
-           ///check diagonal (-x)
+           
+          
            
            
            
